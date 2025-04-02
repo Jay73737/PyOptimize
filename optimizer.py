@@ -19,8 +19,13 @@ class TextParser:
         library = base_class
         if type(lines) == str:
             classes = lines.split(',')
-            library = classes[0].split('import ')[0].split('from')[1].strip()
-            classes[0] = classes[0].split('import ')[1].strip()
+            library = base_class
+            temp_classes = [(base_class,classes[0].split('import ')[1].strip())]
+            if len(classes) > 1:
+                for c in classes[1:]:
+                    temp_classes.append((base_class,c.strip()))
+            classes = temp_classes
+            return classes
         elif type(lines) == list:
             if "from" in lines[0]:
                 library = base_class
@@ -71,8 +76,7 @@ class TextParser:
                         self.import_list.extend(classes)
                     elif ',' in l:
                         classes = self.find_listed_classes(l, temp)
-                        for c in classes:
-                            self.import_list.append((temp, c.strip()))
+                        self.import_list.extend(classes)
                     else:
                         self.import_list.append((temp, l.split("import ")[1].strip()))
                 else:                    
